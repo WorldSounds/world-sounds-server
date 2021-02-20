@@ -12,12 +12,11 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       FavoriteGenre.belongsTo(models.User, {foreignKey: 'UserId'})
-      FavoriteGenre.belongsTo(models.Genre, {foreignKey: 'GenreId'})
     }
   };
   FavoriteGenre.init({
     UserId: DataTypes.INTEGER,
-    GenreId: DataTypes.INTEGER
+    Genre: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'FavoriteGenre',
