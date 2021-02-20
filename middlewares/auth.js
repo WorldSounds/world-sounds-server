@@ -1,5 +1,5 @@
 const { verifyToken } = require('../helpers/jwt')
-const { User } = require('../models')
+const { User, FavoriteGenre } = require('../models')
 
 function authentication(req, res, next) {
     try {
@@ -17,7 +17,7 @@ function authentication(req, res, next) {
                     // })
                     next()
                 } else {
-                    req.userId = data.id
+                    req.UserId = data.id
                     next()
                 }
             })
@@ -31,4 +31,31 @@ function authentication(req, res, next) {
     }
 }
 
-module.exports = {authentication}
+function authorization(req, res, next) {
+    const favGenreId = +req.params.id
+    const UserId = +req.UserId
+
+    FavoriteGenre.findOne({
+        where: { id: favGenreId }
+    })
+        .then(data => {
+            if (!data || data.UserId !== UserId) {
+                next({
+                    message: 'disallowed',
+                    code: 401,
+                    from: 'middleware: authorization'
+                })
+            } else {
+                next()
+            }
+        })
+        .catch(err => {
+            next({
+                message: 'Internal server error',
+                code: 500,
+                from: 'middleware: authorization'
+            })
+        })
+}
+
+module.exports = { authentication, authorization }

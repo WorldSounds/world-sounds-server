@@ -13,3 +13,4 @@ data.map(item => {
 })
 
 console.log(result)
+module.exports = result

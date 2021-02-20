@@ -11,8 +11,8 @@ module.exports = {
       UserId: {
         type: Sequelize.INTEGER
       },
-      GenreId: {
-        type: Sequelize.INTEGER
+      Genre: {
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,

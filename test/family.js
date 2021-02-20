@@ -35,3 +35,4 @@ raw.map(family => {
 })
 
 console.log(result)
+module.exports = result
