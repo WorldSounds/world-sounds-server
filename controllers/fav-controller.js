@@ -1,4 +1,5 @@
 const { FavoriteGenre } = require('../models')
+const { Op } = require("sequelize");
 
 class Controller {
     static getAll(req, res, next) {
@@ -11,6 +12,7 @@ class Controller {
                 res.status(200).json(data)
             })
             .catch(err => {
+                console.log(err)
                 next()
             })
     }
@@ -21,17 +23,32 @@ class Controller {
             Genre: req.body.genre
         }
 
-        FavoriteGenre.create(fav)
+        FavoriteGenre.findOne({
+            where: {
+                [Op.and]: [
+                    { UserId: +req.UserId },
+                    { Genre: req.body.genre }
+                ]
+            }
+        })
+            .then(data => {
+                if (data) {
+                    throw ({ msg: 'Item already existed' })
+                } else {
+                    return FavoriteGenre.create(fav)
+                }
+            })
             .then(data => {
                 const sent = {
                     id: data.id,
                     genre: data.Genre
                 }
-
+                console.log(sent)
                 res.status(201).json(sent)
             })
             .catch(err => {
-                next()
+                console.log(err)
+                // next()
             })
     }
 
@@ -43,7 +60,7 @@ class Controller {
         })
             .then(data => {
                 if (!data) {
-                    res.status(404).json({error: 'Item not found'})
+                    res.status(404).json({ error: 'Item not found' })
                 }
 
                 return FavoriteGenre.destroy({
@@ -54,12 +71,7 @@ class Controller {
                 res.status(200).json({ message: 'Genre successfully deleted' })
             })
             .catch(err => {
-                // next({
-                //     message: 'Internal server error',
-                //     code: 500,
-                //     from: 'Controller Task: delete task'
-                // })
-                res.status(500).json({error: 'Internal Server Error'})
+                res.status(500).json({ error: 'Internal Server Error' })
             })
     }
 }

@@ -1,6 +1,6 @@
 const axios = require('axios')
 
-const access_token = 'BQBcR3sUV2Q9MeQWj4pEoZNy8LbBXEgOLnm00zjasV9bEOtcq4OQO33ajYYms-4Fgdikuv0i38gDMgSp8ov9YOmS1e_in0Kppt2sglRxDhh2lLEOwiILDi0FCka1tCwt1-UUHTu7Nvu0WjwW1kIuu4HobgmOJ9sXGWmcNl5zlonxWiDn9XLoWzq87rAssAqi2r6SrG2Mcw4oEwDj0s6TCdoQ6kgwU3H6lrKq16QRUsy1vWftlXdJvw8RYJYd_iqEU4NlpT68D3wPrZvMxCClRMEIuC9OaRKt-wK9_lLg3I2M'
+const access_token = 'BQCNKmcBRPgNLtRK-5qqqXrQxiGh1AzBNV1CgSxQ3pdliFYChu3f5ZzdpUFvRotYrZx04ZM5CDT28_Zqc26vHjz9-VSLn3FZsaHlL5fVx8oJwt6Wmh2QPs1nGOtg7qbNdiqWFVB2gX2F0S_BBfFNNn4LLrp978rkoE3i17ziIUzCkeWLvB0E5Y0f8e4Uo2OJtb9DdVjvCj8Ppm4CR1dpydf2NmQaoJ8HkwDfmplylK5F9W1GCBZ651SXDDIR87YMs8XM_9rUzmDe6Hv4GvJMuno1UNTptWEK3FpQMhTJolbk'
 
 const seedURL = 'https://api.spotify.com/v1/recommendations?limit=10&market=ES&seed_genres=rock'
 const userURL = 'https://api.spotify.com/v1/me'
@@ -14,7 +14,7 @@ let playlistID = null
 // mendapatkan track berdasarkan 1 genre
 axios.get(seedURL, {
     headers: {
-        "Accept": "application/json",
+        // "Accept": "application/json",
         "Content-Type": "application/json",
         "Authorization": `Bearer ${access_token}`
     }
@@ -29,8 +29,8 @@ axios.get(seedURL, {
                 uri: track.uri
             })
         })
-
-        // console.log(tracks)
+        console.log(tracks[0].artists)
+        console.log(tracks)
 
         return axios.get(userURL, {
             headers: {
@@ -42,8 +42,8 @@ axios.get(seedURL, {
     })
     .then(({ data }) => {
         userID = data.id
-        // console.log(userID)
-
+        console.log(userID)
+        console.log(data)
         return axios({
             method: 'post',
             url: createPlaylistURL + `${userID}/playlists`,
@@ -61,20 +61,19 @@ axios.get(seedURL, {
     })
     .then(({ data }) => {
         playlistID = data.id
-        // console.log(playlistID)
-        let inputURI = encodeURIComponent(tracks[1].uri)
-
+        console.log(playlistID)
+        let inputURI = tracks[1].uri
+        console.log(data, inputURI, '<<<<<<<<<<')
         return axios({
             method: 'post',
-            url: addItemPlaylistURL + `${playlistID}/tracks?position=1&uris=${inputURI}`,
+            url: addItemPlaylistURL + `${playlistID}/tracks?uris=${inputURI}`,
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${access_token}`
             },
             data: {
-                "uris": [`${inputURI}`],
-                "position": 1
+                "uris": `${inputURI}`
             }
         })
     })

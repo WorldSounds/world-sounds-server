@@ -4,17 +4,15 @@ const { User, FavoriteGenre } = require('../models')
 function authentication(req, res, next) {
     try {
         let decoded = verifyToken(req.headers.access_token)
-
         User.findOne({
-            where: { email: decoded.email }
+            where: {email: decoded.email}
         })
             .then(data => {
                 if (!data) {
-                    // next({
-                    //     message: 'Please login first',
-                    //     code: 401,
-                    //     from: 'middleware: authentication'
-                    // })
+                    next({
+                        name: 'noAuth',
+                        status: 401
+                    })
                     next()
                 } else {
                     req.UserId = data.id
@@ -27,7 +25,7 @@ function authentication(req, res, next) {
         //     code: 500,
         //     from: 'middleware: authentication'
         // })
-        next()
+        next(err)
     }
 }
 

@@ -1,7 +1,7 @@
+
 if(process.env.NODE_ENV !== 'production'){
     require('dotenv').config()
 }
-
 // require
 const express = require('express')
 const cors = require('cors')
@@ -21,6 +21,11 @@ app.use(UserRouter)
 app.use(FavGenreRouter)
 app.use(errorHandler)
 
+var cron = require('node-cron');
+ 
+cron.schedule('1,2,4,5 * * * *', () => {
+  console.log('running every minute 1, 2, 4 and 5');
+});
 // listening
 
 module.exports = app
