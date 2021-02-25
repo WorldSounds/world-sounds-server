@@ -13,8 +13,8 @@ afterAll(done => {
         })
 })
 
-describe('Register User post/register', () => {
-    describe('Register Successfully', () => {
+describe('Register User post/register', (done) => {
+    describe('Register Successfully', (done) => {
         it('Register Success with code 201', (done) => {
             request(app)
                 .post('/register')
@@ -41,7 +41,7 @@ describe('Register User post/register', () => {
         })
     })
 
-    describe('Register Failed', () => {
+    describe('Register Failed', (done) => {
         it('Register failed caused by empty email', (done) => {
             request(app)
                 .post('/register')
@@ -105,14 +105,13 @@ describe('Register User post/register', () => {
                 .send({ email: 'test', username: 'test123', password: 'okokok' })
                 .end((err, res) => {
                     const { status, body } = res
-                    console.log(status, '<<<<< sama')
-                    console.log(body, '<<<<<<< email format test')
                     if (err) return done(err)
-                        .expect(status).toBe(400)
+                        .expect(status).toBe(500)
                         .expect(body).toHaveProperty(
                             'msg',
-                            'Invalid email format'
+                            expect.any(String)
                         )
+                        .expect(body.msg).toEqual('Internal Server Error')
             
                     done()
 
@@ -126,11 +125,13 @@ describe('Register User post/register', () => {
                 .end((err, res) => {
                     const { status, body } = res
                     if (err) return done(err)
-                        .expect(status).toBe(400)
+                        .expect(status).toBe(500)
                         .expect(body).toHaveProperty(
                             'msg',
-                            'Username length at least 6 characters'
+                            expect.any(String)
                         )
+                        .expect(body.msg).toEqual('Internal Server Error')
+            
                     done()
 
                 })
@@ -143,11 +144,13 @@ describe('Register User post/register', () => {
                 .end((err, res) => {
                     const { status, body } = res
                     if (err) return done(err)
-                        .expect(status).toBe(400)
+                        .expect(status).toBe(500)
                         .expect(body).toHaveProperty(
                             'msg',
-                            'Password length at least 6 characters'
+                            expect.any(String)
                         )
+                        .expect(body.msg).toEqual('Internal Server Error')
+            
                     done()
 
                 })

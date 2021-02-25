@@ -19,39 +19,38 @@ beforeAll((done) => {
     }], { returning: true })
         .then(user => {
             // done()
-            // const input = {
-            //     email: 'test@mail.com',
-            //     password: 'okokok'
-            // }
+            const input = {
+                email: 'test@mail.com',
+                password: 'okokok'
+            }
 
-            // return request(app)
-            //     .post('/login')
-            //     .send(input)
-            //     .end((err, res) => {
-            //         if (err) {
-            //             done(err)
-            //         }
+            return request(app)
+                .post('/login')
+                .send(input)
+                .end((err, res) => {
+                    if (err) {
+                        done(err)
+                    }
 
-            //         access_token = res.body.access_token
-            //         let decoded = verifyToken(access_token)
-            //         UserId = decoded.id
+                    access_token = res.body.access_token
+                    let decoded = verifyToken(access_token)
+                    UserId = decoded.id
 
                     //done()
                     return queryInterface.bulkInsert('FavoriteGenres', [{
-                        UserId: 1,
+                        UserId,
                         Genre: 'rock',
                         createdAt: new Date(),
                         updatedAt: new Date()
                     }], { returning: true })
                         .then(user => {
-                            console.log(user, '<<<<<<<<<< user ni bos di before allll')
                             favGenreId = user.id
                             done()
                         })
                         .catch(err => {
                             done(err)
                         })
-                // })
+                })
         })
         .catch(err => {
             done(err)
@@ -72,8 +71,8 @@ afterAll(done => {
         })
 })
 
-describe('favorite genre add/get by id/delete', () => {
-    describe('add fav genre successfully', () => {
+describe('favorite genre add/get by id/delete', (done) => {
+    describe('add fav genre successfully', (done) => {
         it('add fav genre success with status code 201', (done) => {
             request(app)
                 .post('/favgenre')
@@ -97,12 +96,12 @@ describe('favorite genre add/get by id/delete', () => {
         })
     })
 
-    describe('get all favorite genre based on user id ', () => {
+    describe('get all favorite genre based on user id ', (done) => {
         it('get all fav genre success with status code 200', (done) => {
             request(app)
                 .get('/favgenre')
                 .set('access_token', access_token)
-                // .UserId(UserId)
+                .UserId(UserId)
                 .end((err, res) => {
                     const { status, body } = res
                     if (err) return done(err)
@@ -121,35 +120,16 @@ describe('favorite genre add/get by id/delete', () => {
         })
     })
 
-    describe('delete single favorite genre based on user id', () => {
+    describe('delete single favorite genre based on user id', (done) => {
         it('delete successfully with status code 200', (done) => {
             request(app)
                 .get('/favgenre' + `/${favGenreId}`)
                 .set('access_token', access_token)
-                // .UserId(UserId)
+                .UserId(UserId)
                 .end((err, res) => {
                     const { status, body } = res
                     if (err) return done(err)
                         .expect(status).toBe(200)
-                        .expect(body).toHaveProperty(
-                            'message',
-                            expect.any(String)
-                        )
-
-                    done()
-                })
-        })
-    })
-    describe('fail get all favorite because no access_token', () => {
-        it('get all fail because not access token', (done) => {
-            request(app)
-                .get('/favgenre')
-                // .set('access_token', access_token)
-                // .UserId(UserId)
-                .end((err, res) => {
-                    const { status, body } = res
-                    if (err) return done(err)
-                        .expect(status).toBe(400)
                         .expect(body).toHaveProperty(
                             'message',
                             expect.any(String)

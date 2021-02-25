@@ -14,23 +14,22 @@ beforeAll(done => {
     createdAt: new Date(),
     updatedAt: new Date()
   }], { returning: true })
-    .then(_ => {
-      done()
+    .then(user => {
+      // done()
 
-      // return request(app)
-      //   .post('/login')
-      //   .send({ validator: 'test@mail.com', password: 'okokok' })
-      //   .end((err, res) => {
-      //     const { status, body } = res
-      //     if (err) return done(err)
+      return request(app)
+        .post('/login')
+        .send({ validator: 'test@mail.com', password: 'okokok' })
+        .end((err, res) => {
+          const { status, body } = res
+          if (err) return done(err)
 
-      //     access_token = body.access_token
+          access_token = body.access_token
 
-      //     done()
-      //   })
+          done()
+        })
     })
     .catch(err => {
-      console.log(err, '<<<<<<<<<<<<<<<<<< before alll')
       done(err)
     })
 })
