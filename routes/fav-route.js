@@ -8,6 +8,6 @@ router.use(authentication)
 router.get('/favgenre', FavController.getAll)
 router.post('/favgenre', FavController.addFavGenre)
 
-router.delete('/favgenre/:id', FavController.deleteFavGenre)
+router.delete('/favgenre/:id', authorization, FavController.deleteFavGenre)
 
 module.exports = router

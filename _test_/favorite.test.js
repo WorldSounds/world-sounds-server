@@ -3,6 +3,7 @@ const app = require('../app')
 const { sequelize } = require('../models')
 const { queryInterface } = sequelize
 const { verifyToken } = require('../helpers/jwt')
+const { hashPassword } = require('../helpers/bcrypt')
 
 let access_token = null
 let UserId = null
@@ -59,6 +60,9 @@ beforeAll((done) => {
 
 afterAll(done => {
     queryInterface.bulkDelete('FavoriteGenres')
+        .then(_ => {
+            return queryInterface.bulkDelete('Users')
+        })
         .then(_ => {
             done()
         })

@@ -1,10 +1,10 @@
 module.exports = (err, req, res, next) => {
   switch(err.name){
-    case 'SequelizeDatabaseError':
+    case 'SequelizeValidationError':
       return res.status(400).json({
-        msg: err.message
+        msg: err.errors[0].message
       })
-    case 'SequelizeUniqueContraintError':
+    case 'SequelizeUniqueConstraintError':
       return res.status(400).json({
         msg: 'email already registered'
       })
@@ -17,8 +17,6 @@ module.exports = (err, req, res, next) => {
       msg: 'Please Login first'
     })
     default:
-      return res.status(500).json({
-        msg: 'Internal Server Error'
-      })
+      return res.status(500).json()
   }
 }

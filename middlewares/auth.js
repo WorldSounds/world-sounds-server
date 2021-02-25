@@ -13,7 +13,6 @@ function authentication(req, res, next) {
                         name: 'noAuth',
                         status: 401
                     })
-                    next()
                 } else {
                     req.UserId = data.id
                     next()
@@ -39,20 +38,15 @@ function authorization(req, res, next) {
         .then(data => {
             if (!data || data.UserId !== UserId) {
                 next({
-                    message: 'disallowed',
-                    code: 401,
-                    from: 'middleware: authorization'
+                    name: 'noAuthorized',
+                    status: 401,
                 })
             } else {
                 next()
             }
         })
         .catch(err => {
-            next({
-                message: 'Internal server error',
-                code: 500,
-                from: 'middleware: authorization'
-            })
+            next(err)
         })
 }
 

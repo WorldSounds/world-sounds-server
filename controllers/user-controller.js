@@ -3,8 +3,8 @@ const { Op } = require("sequelize")
 const { comparePassword } = require('../helpers/bcrypt')
 const { generateToken, verifyToken } = require('../helpers/jwt')
 const querystring = require('querystring')
-const { default: axios } = require('axios')
-const redirect_uri = 'http://localhost:6300/callbacks'
+const axios = require('axios')
+const redirect_uri = process.env.REDIRECT_URI
 const request = require('request')
 
 class Controller {
@@ -95,7 +95,6 @@ class Controller {
     }
 
     static loginSpotify(req, res, next) {
-        // console.log(process.env.SPOTIFY_CLIENT_ID)
         res.redirect('https://accounts.spotify.com/authorize?' +
             querystring.stringify({
                 response_type: 'code',
@@ -115,9 +114,9 @@ class Controller {
                 grant_type: 'authorization_code'
             },
             headers: {
-                'Authorization': 'Basic ' + (new Buffer(
+                'Authorization': 'Basic ' + Buffer.from(
                     process.env.SPOTIFY_CLIENT_ID + ':' + process.env.SPOTIFY_CLIENT_SECRET
-                ).toString('base64'))
+                ).toString('base64')
             },
             json: true
         }
@@ -126,13 +125,12 @@ class Controller {
             var access_token = body.access_token
             var refresh_token = body.refresh_token
             console.log(body, '<<<< ini refresh tokenya ')
-            let uri = process.env.FRONTEND_URI || 'http://localhost:3000/user'
+            let uri = process.env.FRONTEND_URI || 'http://localhost:3000'
             const option = {
                 url: 'https://api.spotify.com/v1/me',
                 headers: { 'Authorization': 'Bearer ' + access_token },
                 json: true
             }
-            // https://accounts.spotify.com/id/login?continue=https:%2F%2Faccounts.spotify.com%2Fauthorize%3Fscope%3Duser-read-private%2Buser-read-email%26response_type%3Dcode%26redirect_uri%3Dhttp%253A%252F%252Flocalhost%253A6300%252Fcallbacks%26client_id%3Dd0574f1b62714617865db1237adeb779
             const axios = require('axios')
             let user;
             axios.get('https://api.spotify.com/v1/me', {
@@ -165,17 +163,11 @@ class Controller {
                     const access_token_local = generateToken({ email: userData.email, id: userData.id })
                     console.log(refresh_token, '<<<<< ini refresh tokennya', access_token, '<<<< access_token biasa')
                     console.log(access_token_local)
-                    // res.status(200).json({
-                    //     access_token
-                    // })
                     res.redirect(`${uri}/dashboard/${access_token}/${access_token_local}/${refresh_token}`)
                 })
                 .catch(err => {
                     console.log(err)
                 })
-            // request.get(option, function(error, response, body) {
-            //     console.log(body)
-            // })
         })
     }
     static async refresh_token(req, res, next) {
