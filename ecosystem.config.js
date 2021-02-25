@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: 'worldsounds',
-      script: 'npm install && nodemon app.js',
+      script: 'npm install && nodemon server.js',
       env: {
         REDIRECT_URI: "ec2-54-179-61-252.ap-southeast-1.compute.amazonaws.com:6300/callbacks",
         SPOTIFY_CLIENT_ID: 'd0574f1b62714617865db1237adeb779',
